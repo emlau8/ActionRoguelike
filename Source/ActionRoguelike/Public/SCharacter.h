@@ -40,6 +40,8 @@ protected:
 	void MoveRight(float Value);
 
 	void PrimaryAttack();
+
+	void StartJump();
 	
 public:	
 	// Called every frame
