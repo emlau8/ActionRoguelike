@@ -15,6 +15,7 @@ ASExplosiveBarrel::ASExplosiveBarrel()
 	StaticMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComp"));
 	StaticMeshComp->SetCollisionProfileName(TEXT("PhysicsActor"));
 	StaticMeshComp->SetSimulatePhysics(true);
+	StaticMeshComp->OnComponentHit.AddDynamic(this, &ASExplosiveBarrel::OnHit);
 
 	RadialForceComp = CreateDefaultSubobject<URadialForceComponent>(TEXT("RadialForceComponent"));
 	RadialForceComp->Radius = 700;
@@ -37,7 +38,7 @@ void ASExplosiveBarrel::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ASExplosiveBarrel::OnComponentHit()
+void ASExplosiveBarrel::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	// Fire the Radial Impulse
 	RadialForceComp->FireImpulse();
