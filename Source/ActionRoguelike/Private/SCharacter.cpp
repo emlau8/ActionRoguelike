@@ -56,8 +56,7 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ASCharacter::PrimaryAttack);
 	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed, this, &ASCharacter::PrimaryInteract);
 
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASCharacter::StartJump);
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ASCharacter::StopJumping);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASCharacter::Jump);
 	
 }
 
@@ -89,8 +88,6 @@ void ASCharacter::PrimaryAttack()
 	PlayAnimMontage(AttackAnim);
 
 	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::PrimaryAttack_TimeElapsed, 0.2f);
-
-	//GetWorldTimerManager().ClearTimer(TimerHandle_PrimaryAttack);
 	
 }
 
@@ -113,9 +110,4 @@ void ASCharacter::PrimaryAttack_TimeElapsed()
 	SpawnParams.Instigator = this;
 	
 	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
-}
-
-void ASCharacter::StartJump()
-{
-	Jump();
 }

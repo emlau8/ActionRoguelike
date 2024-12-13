@@ -2,45 +2,43 @@
 
 
 #include "SExplosiveBarrel.h"
-#include "Components/StaticMeshComponent.h"
 #include "PhysicsEngine/RadialForceComponent.h"
+#include "Components/StaticMeshComponent.h"
 
 
 // Sets default values
 ASExplosiveBarrel::ASExplosiveBarrel()
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
-	StaticMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComp"));
-	StaticMeshComp->SetCollisionProfileName(TEXT("PhysicsActor"));
-	StaticMeshComp->SetSimulatePhysics(true);
-	StaticMeshComp->OnComponentHit.AddDynamic(this, &ASExplosiveBarrel::OnHit);
-
-	RadialForceComp = CreateDefaultSubobject<URadialForceComponent>(TEXT("RadialForceComponent"));
-	RadialForceComp->Radius = 700;
-	RadialForceComp->ImpulseStrength = 2000.0f;
-	RadialForceComp->bImpulseVelChange = true;
-	RadialForceComp->SetupAttachment(StaticMeshComp);
+	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComp"));
+	MeshComp->SetSimulatePhysics(true);
 	
-}
 
-// Called when the game starts or when spawned
-void ASExplosiveBarrel::BeginPlay()
-{
-	Super::BeginPlay();
+	ForceComp = CreateDefaultSubobject<URadialForceComponent>(TEXT("RadialForceComponent"));
+	ForceComp->SetupAttachment(MeshComp);
+
+	// Leaving this on applies small constant force vie component "tick" (Optional)
+	ForceComp->SetAutoActivate(false);
 	
+	ForceComp->Radius = 700;
+	ForceComp->ImpulseStrength = 2000.0f;
+	
+	ForceComp->bImpulseVelChange = true;
+	
+	ForceComp->AddCollisionChannelToAffect(ECC_WorldDynamic);
 }
 
-// Called every frame
-void ASExplosiveBarrel::Tick(float DeltaTime)
+void ASExplosiveBarrel::PostInitializeComponents()
 {
-	Super::Tick(DeltaTime);
+	// Don't forget to call parent function
+	Super::PostInitializeComponents();
+
+	MeshComp->OnComponentHit.AddDynamic(this, &ASExplosiveBarrel::OnHit);
 }
+
 
 void ASExplosiveBarrel::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	// Fire the Radial Impulse
-	RadialForceComp->FireImpulse();
+	ForceComp->FireImpulse();
 }
 

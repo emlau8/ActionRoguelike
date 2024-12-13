@@ -55,8 +55,6 @@ protected:
 	
 	void PrimaryAttack_TimeElapsed();
 	
-	void StartJump();
-	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

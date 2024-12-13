@@ -15,24 +15,21 @@ class ACTIONROGUELIKE_API ASExplosiveBarrel : public AActor
 	GENERATED_BODY()
 
 public:
-	
+	// Sets Default Values for this actor's properties
 	ASExplosiveBarrel();
 
 protected:
 
 	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* StaticMeshComp;
+	UStaticMeshComponent* MeshComp;
 
 	UPROPERTY(VisibleAnywhere)
-	URadialForceComponent* RadialForceComp;
+	URadialForceComponent* ForceComp;
 
+	virtual void PostInitializeComponents() override;
+	
+	// Must be market with ufunction in order to "bind" the event
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 	
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 };
