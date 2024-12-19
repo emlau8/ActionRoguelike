@@ -48,9 +48,6 @@ void USInteractionComponent::PrimaryInteract()
 	
 	FVector End = EyeLocation + (EyeRotation.Vector() * 1000);
 
-	//FHitResult Hit;
-	//bool bBlockingHit = GetWorld()->LineTraceSingleByObjectType(Hit,EyeLocation, End, ObjectQueryParams);
-
 	TArray<FHitResult> Hits;
 
 	float Radius = 30.f;
