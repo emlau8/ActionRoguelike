@@ -57,6 +57,8 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed, this, &ASCharacter::PrimaryInteract);
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASCharacter::Jump);
+
+	PlayerInputComponent->BindAction("Blackhole", IE_Pressed, this, &ASCharacter::Blackhole);
 	
 }
 
@@ -88,6 +90,14 @@ void ASCharacter::PrimaryAttack()
 	PlayAnimMontage(AttackAnim);
 
 	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::PrimaryAttack_TimeElapsed, 0.2f);
+	
+}
+
+void ASCharacter::Blackhole()
+{
+	PlayAnimMontage(BlackholeAnim);
+
+	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::Blackhole_TimeElapsed, 0.2f);
 	
 }
 
@@ -137,6 +147,49 @@ void ASCharacter::PrimaryAttack_TimeElapsed()
 
 	// Spawn Projectile
 	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
+
+	// Draw Debug Lines 
+	//DrawDebugLine(GetWorld(), HandLocation, TraceEnd, LineColor, false, 2.0f, 0, 2.0f);
+}
+
+void ASCharacter::Blackhole_TimeElapsed()
+{
+	// Get Spawn Projectile Location
+	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+	
+	// Trace Start from the camera location
+	FVector TraceStart = CameraComp->GetComponentLocation();
+	// Extend Trace 100000 units forward
+	FVector TraceEnd = TraceStart + (CameraComp->GetForwardVector()* 100000);
+
+	// Perform line trace to interact with environment
+	FHitResult HitResult;
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this); // Ignore the character itself
+	QueryParams.bTraceComplex = true; // Do a precise trace
+	
+	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult,TraceStart,TraceEnd,ECC_Visibility);
+	// Set Debug Line Color
+	FColor LineColor = bHit ? FColor::Green : FColor::Red;
+	// Set the target location
+	FVector TargetLocation = bHit ? HitResult.Location : TraceEnd;
+	
+	// Calculate the direction vector
+	FVector Direction = (TargetLocation - HandLocation).GetSafeNormal();
+
+	// Create the NewRotation
+	FRotator NewRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
+	
+	// Set Transform for spawning projectile
+	FTransform SpawnTM = FTransform(NewRotation,HandLocation);
+	
+	//Hand Collision Override
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	SpawnParams.Instigator = this;
+
+	// Spawn Projectile
+	GetWorld()->SpawnActor<AActor>(BlackholeClass, SpawnTM, SpawnParams);
 
 	// Draw Debug Lines 
 	//DrawDebugLine(GetWorld(), HandLocation, TraceEnd, LineColor, false, 2.0f, 0, 2.0f);

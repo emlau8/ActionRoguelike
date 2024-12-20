@@ -27,6 +27,12 @@ protected:
 
 	FTimerHandle TimerHandle_PrimaryAttack;
 
+	UPROPERTY(EditAnywhere, Category = "Blackhole")
+	TSubclassOf<AActor> BlackholeClass;
+
+	UPROPERTY(EditAnywhere, Category = "Blackhole")
+	UAnimMontage* BlackholeAnim;
+
 public:
 	// Sets default values for this character's properties
 	ASCharacter();
@@ -50,11 +56,14 @@ protected:
 	void MoveRight(float Value);
 
 	void PrimaryAttack();
-
-	void PrimaryInteract();
 	
 	void PrimaryAttack_TimeElapsed();
 	
+	void PrimaryInteract();
+
+	void Blackhole();
+	
+	void Blackhole_TimeElapsed();
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
