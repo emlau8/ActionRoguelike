@@ -33,6 +33,12 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Blackhole")
 	UAnimMontage* BlackholeAnim;
 
+	UPROPERTY(EditAnywhere, Category = "Dash")
+	TSubclassOf<AActor> DashClass;
+
+	UPROPERTY(EditAnywhere, Category = "Dash")
+	UAnimMontage* DashAnim;
+
 public:
 	// Sets default values for this character's properties
 	ASCharacter();
@@ -64,6 +70,11 @@ protected:
 	void Blackhole();
 	
 	void Blackhole_TimeElapsed();
+
+	void Dash();
+	
+	void Dash_TimeElapsed();
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
