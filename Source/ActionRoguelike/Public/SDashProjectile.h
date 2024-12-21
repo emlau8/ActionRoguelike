@@ -6,7 +6,6 @@
 #include "SBaseProjectile.h"
 #include "SDashProjectile.generated.h"
 
-class UParticleSystemComponent;
 
 /**
  * 
@@ -16,13 +15,29 @@ class ACTIONROGUELIKE_API ASDashProjectile : public ASBaseProjectile
 {
 	GENERATED_BODY()
 
-public:	
-// Sets default values for this actor's properties
-ASDashProjectile();
-
 protected:
 
-UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
-UParticleSystemComponent* ExplosionComp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dash")
+	UParticleSystem* TeleportEffect;
+
+	FTimerHandle TimerHandle;
+
+	bool bHitOccurred;
+	FVector SpawnLocation;
+
+public:	
+
+	// Sets default values for this actor's properties
+	ASDashProjectile();
+
+protected:
+		
+	void BeginPlay();
+
+	UFUNCTION()
+	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 	
+	void Dash_TeleportEffect();
+	
+	void Dash_TeleportPawn();
 };
