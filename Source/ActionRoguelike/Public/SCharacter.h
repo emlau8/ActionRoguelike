@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SAttributeComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/Character.h"
 #include "SCharacter.generated.h"
@@ -11,6 +12,7 @@ class UCameraComponent;
 class USpringArmComponent;
 class USInteractionComponent;
 class UAnimMontage;
+class USAttributeComponent;
 
 UCLASS()
 class ACTIONROGUELIKE_API ASCharacter : public ACharacter
@@ -25,7 +27,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	UAnimMontage* AttackAnim;
 
-	FTimerHandle TimerHandle_PrimaryAttack;
+	FTimerHandle TimerHandle;
 
 	UPROPERTY(EditAnywhere, Category = "Blackhole")
 	TSubclassOf<AActor> BlackholeClass;
@@ -53,6 +55,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	USInteractionComponent* InteractionComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	USAttributeComponent* AttributesComp;
 	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -66,6 +71,8 @@ protected:
 	void PrimaryAttack_TimeElapsed();
 	
 	void PrimaryInteract();
+	
+	void AimOffsetCorrection(TSubclassOf<AActor> SpawnClass);
 
 	void Blackhole();
 	
