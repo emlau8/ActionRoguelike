@@ -5,6 +5,7 @@
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ASBaseProjectile::ASBaseProjectile()
@@ -14,31 +15,40 @@ ASBaseProjectile::ASBaseProjectile()
 
 	SphereComp = CreateDefaultSubobject<USphereComponent>("SphereComp");
 	SphereComp->SetCollisionProfileName("Projectile");
+	SphereComp->OnComponentHit.AddDynamic(this, &ASBaseProjectile::OnActorHit);
 	RootComponent = SphereComp;
 
 	EffectComp = CreateDefaultSubobject<UParticleSystemComponent>("EffectComp");
-	EffectComp->SetupAttachment(SphereComp);
+	EffectComp->SetupAttachment(RootComponent);
 
 	MovementComp = CreateDefaultSubobject<UProjectileMovementComponent>("MovementComp");
-	MovementComp->InitialSpeed = 1000.0f;
 	MovementComp->bRotationFollowsVelocity = true;
 	MovementComp->bInitialVelocityInLocalSpace = true;
+	MovementComp->ProjectileGravityScale = 0.0f;
+	MovementComp->InitialSpeed = 1000.0f;
 
 }
 
-// Called when the game starts or when spawned
-void ASBaseProjectile::BeginPlay()
+void ASBaseProjectile::OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	Super::BeginPlay();
-
-	bool bShouldIgnore = true;
-	SphereComp->IgnoreActorWhenMoving(GetInstigator() , bShouldIgnore);
+	Explode();
 }
 
-// Called every frame
-void ASBaseProjectile::Tick(float DeltaTime)
+// _Implementation from it being marked as BlueprintNativeEvent
+void ASBaseProjectile::Explode_Implementation()
 {
-	Super::Tick(DeltaTime);
+	// Check to make sure we aren't already being 'destroyed'
+	// Adding ensure to see if we encounter this situation at all
+	if (ensure(!IsPendingKillPending()))
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(this, ImpactVFX, GetActorLocation(), GetActorRotation());
 
+		Destroy();
+	}
 }
 
+void ASBaseProjectile::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	//SphereComp->IgnoreActorWhenMoving(GetInstigator(), true);
+}

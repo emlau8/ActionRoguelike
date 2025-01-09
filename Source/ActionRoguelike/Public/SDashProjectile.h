@@ -17,27 +17,25 @@ class ACTIONROGUELIKE_API ASDashProjectile : public ASBaseProjectile
 
 protected:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dash")
-	UParticleSystem* TeleportEffect;
+	UPROPERTY(EditDefaultsOnly, Category = "Teleport")
+	float TeleportDelay;
 
-	FTimerHandle TimerHandle;
+	UPROPERTY(EditDefaultsOnly, Category = "Teleport")
+	float DetonateDelay;
 
-	bool bHitOccurred;
-	FVector SpawnLocation;
+	// Handle to cancel timer if we already hit something
+	FTimerHandle TimerHandle_DelayedDetonate;
+	
+	// Base class using BlueprintNativeEvent, we must override the _Implementation not the Explode()
+	virtual void Explode_Implementation() override;
+
+	void TeleportInstigator();
+
+	virtual void BeginPlay() override;
 
 public:	
 
 	// Sets default values for this actor's properties
 	ASDashProjectile();
-
-protected:
-		
-	void BeginPlay();
-
-	UFUNCTION()
-	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
-	
-	void Dash_TeleportEffect();
-	
-	void Dash_TeleportPawn();
 };
+

@@ -10,31 +10,40 @@ class USphereComponent;
 class UProjectileMovementComponent;
 class UParticleSystemComponent;
 
-UCLASS()
+UCLASS(ABSTRACT) // 'Abstract' marks this class as incomplete keeping this out of certain dropdowns windows like SpawnActor in Unreal Editor
 class ACTIONROGUELIKE_API ASBaseProjectile : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
-	// Sets default values for this actor's properties
-	ASBaseProjectile();
 
 protected:
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, category = "Effect")
+	UParticleSystem* ImpactVFX;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category= "Component")
 	USphereComponent* SphereComp;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category= "Component")
 	UProjectileMovementComponent* MovementComp;
 
-	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category= "Component")
 	UParticleSystemComponent* EffectComp;
-	
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+
+	// 'virtual' so we can override this in child-classes
+	UFUNCTION()
+	virtual void OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+	//BlueprintNativeEvent = C++ base implement, can be expanded in Blueprints
+	// BlueprintCallable to allow child classes to trigger explosions
+	// Not required for assigment, useful for expanding in Blueprint later on
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void Explode();
+
+	virtual void PostInitializeComponents() override;
 
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	
+	// Sets default values for this actor's properties
+	ASBaseProjectile();
 
 };

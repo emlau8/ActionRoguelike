@@ -72,7 +72,7 @@ protected:
 	
 	void PrimaryInteract();
 	
-	void AimOffsetCorrection(TSubclassOf<AActor> SpawnClass);
+	void SpawnProjectile(TSubclassOf<AActor> SpawnClass);
 
 	void Blackhole();
 	

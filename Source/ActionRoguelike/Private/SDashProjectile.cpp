@@ -2,70 +2,50 @@
 
 
 #include "SDashProjectile.h"
-
-#include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
-#include "ProfilingDebugging/CookStats.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 
-
-// Sets default values
 ASDashProjectile::ASDashProjectile()
 {
-	bHitOccurred = false;
+	TeleportDelay = 0.2f;
+	DetonateDelay = 0.2f;
+
+	MovementComp->InitialSpeed = 6000.0f;
 }
 
-// Called when the game starts or when spawned
 void ASDashProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-
-	if (SphereComp)
-	{
-		SphereComp->OnComponentHit.AddDynamic(this, &ASDashProjectile::OnHit);
-	}
-
-	GetWorldTimerManager().SetTimer(TimerHandle, this, &ASDashProjectile::Dash_TeleportEffect, 0.5f);
 	
+	GetWorldTimerManager().SetTimer(TimerHandle_DelayedDetonate, this, &ASDashProjectile::Explode, DetonateDelay);
 }
 
-void ASDashProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+void ASDashProjectile::Explode_Implementation()
 {
-	if (!bHitOccurred)
-	{
-		bHitOccurred = true; // Register that a hit has occurred
+	// Clear Time if the Explode was already called through another source like OnActorHit
+	GetWorldTimerManager().ClearTimer(TimerHandle_DelayedDetonate);
 
-		// Cancel the timer to avoid triggering teleportation twice
-		GetWorldTimerManager().ClearTimer(TimerHandle);
+	UGameplayStatics::SpawnEmitterAtLocation(this, ImpactVFX,GetActorLocation(), GetActorRotation());
 
-		Dash_TeleportEffect(); // Trigger the teleport effect immediately
-	}
+	EffectComp->DeactivateSystem();
+
+	MovementComp->StopMovementImmediately();
+	SetActorEnableCollision(false);
+
+	FTimerHandle TimerHandle_DelayedTeleport;
+	GetWorldTimerManager().SetTimer(TimerHandle_DelayedTeleport, this, &ASDashProjectile::TeleportInstigator, TeleportDelay);
+
+	// Skip base implementation as it will destroy actor (we need to stay alive a bit longer to finish the 2nd timer)
+	//Super::Explode_Implementation();
 }
 
-void ASDashProjectile::Dash_TeleportEffect()
+void ASDashProjectile::TeleportInstigator()
 {
-	// Check if teleport effect needs to be spawned
-	if (TeleportEffect)
+	AActor* ActorToTeleport = GetInstigator();
+	if (ensure(ActorToTeleport))
 	{
-		SpawnLocation = GetActorLocation(); // Spawn at actor's Location
-		FRotator SpawnRotation = GetActorRotation();
-		
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), TeleportEffect, SpawnLocation, SpawnRotation);
+		// Keep instigator rotation or it may end up jarring
+		ActorToTeleport->TeleportTo(GetActorLocation(), ActorToTeleport->GetActorRotation(), false, false);
 	}
-
-	GetWorldTimerManager().SetTimer(TimerHandle, this, &ASDashProjectile::Dash_TeleportPawn, 0.2f);
-}
-
-void ASDashProjectile::Dash_TeleportPawn()
-{
-	APawn* PlayerPawn = Cast<APawn>(GetInstigator());
-
-	if (PlayerPawn)
-	{
-		// Teleport Player to hit location
-		PlayerPawn->SetActorLocation(SpawnLocation);
-	}
-
-	// Destroy the projectile
-	Destroy();
 }
