@@ -41,12 +41,6 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Dash")
 	UAnimMontage* DashAnim;
 
-public:
-	// Sets default values for this character's properties
-	ASCharacter();
-
-protected:
-
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArmComp;
 
@@ -57,10 +51,7 @@ protected:
 	USInteractionComponent* InteractionComp;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
-	USAttributeComponent* AttributesComp;
-	
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	USAttributeComponent* AttributeComp;
 
 	void MoveForward(float Value);
 	
@@ -69,10 +60,6 @@ protected:
 	void PrimaryAttack();
 	
 	void PrimaryAttack_TimeElapsed();
-	
-	void PrimaryInteract();
-	
-	void SpawnProjectile(TSubclassOf<AActor> SpawnClass);
 
 	void Blackhole();
 	
@@ -81,11 +68,20 @@ protected:
 	void Dash();
 	
 	void Dash_TimeElapsed();
+	
+	void SpawnProjectile(TSubclassOf<AActor> SpawnClass);
 
+	void PrimaryInteract();
+	
+	UFUNCTION()
+	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
+
+	virtual void PostInitializeComponents() override;
+	
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
+	// Sets default values for this character's properties
+	ASCharacter();
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 

@@ -9,18 +9,18 @@
 // Sets default values
 ASExplosiveBarrel::ASExplosiveBarrel()
 {
-	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComp"));
+	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>("MeshComp");
 	MeshComp->SetSimulatePhysics(true);
+	RootComponent = MeshComp;
 	
-
-	ForceComp = CreateDefaultSubobject<URadialForceComponent>(TEXT("RadialForceComponent"));
+	ForceComp = CreateDefaultSubobject<URadialForceComponent>("ForceComp");
 	ForceComp->SetupAttachment(MeshComp);
 
 	// Leaving this on applies small constant force vie component "tick" (Optional)
 	ForceComp->SetAutoActivate(false);
 	
-	ForceComp->Radius = 700;
-	ForceComp->ImpulseStrength = 2000.0f;
+	ForceComp->Radius = 750;
+	ForceComp->ImpulseStrength = 2500.0f;
 	
 	ForceComp->bImpulseVelChange = true;
 	
@@ -32,11 +32,11 @@ void ASExplosiveBarrel::PostInitializeComponents()
 	// Don't forget to call parent function
 	Super::PostInitializeComponents();
 
-	MeshComp->OnComponentHit.AddDynamic(this, &ASExplosiveBarrel::OnHit);
+	MeshComp->OnComponentHit.AddDynamic(this, &ASExplosiveBarrel::OnActorHit);
 }
 
 
-void ASExplosiveBarrel::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+void ASExplosiveBarrel::OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	ForceComp->FireImpulse();
 

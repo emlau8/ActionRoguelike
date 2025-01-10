@@ -24,25 +24,18 @@ ASCharacter::ASCharacter()
 
 	InteractionComp = CreateDefaultSubobject<USInteractionComponent>("InteractionComp");
 
-	AttributesComp = CreateDefaultSubobject<USAttributeComponent>("AttributesComp");
+	AttributeComp = CreateDefaultSubobject<USAttributeComponent>("AttributesComp");
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
 	bUseControllerRotationYaw = false;
 }
 
-// Called when the game starts or when spawned
-void ASCharacter::BeginPlay()
+void ASCharacter::PostInitializeComponents()
 {
-	Super::BeginPlay();
-	
-}
+	Super::PostInitializeComponents();
 
-// Called every frame
-void ASCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-	
+	AttributeComp->OnHealthChanged.AddDynamic(this, &ASCharacter::OnHealthChanged);
 }
 
 // Called to bind functionality to input
@@ -184,3 +177,14 @@ void ASCharacter::PrimaryInteract()
 		InteractionComp->PrimaryInteract();
 	}
 }
+
+void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta)
+{
+	if (NewHealth <= 0.0f && Delta < 0.0f)
+	{
+		APlayerController* PC = Cast <APlayerController>(GetController());
+		DisableInput(PC);
+	}
+}
+
+

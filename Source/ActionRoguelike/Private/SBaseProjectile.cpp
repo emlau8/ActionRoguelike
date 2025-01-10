@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "SBaseProjectile.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
@@ -25,7 +24,7 @@ ASBaseProjectile::ASBaseProjectile()
 	MovementComp->bRotationFollowsVelocity = true;
 	MovementComp->bInitialVelocityInLocalSpace = true;
 	MovementComp->ProjectileGravityScale = 0.0f;
-	MovementComp->InitialSpeed = 1000.0f;
+	MovementComp->InitialSpeed = 8000.0f;
 
 }
 

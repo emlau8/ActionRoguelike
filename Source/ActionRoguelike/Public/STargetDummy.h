@@ -16,7 +16,6 @@ class ACTIONROGUELIKE_API ASTargetDummy : public AActor
 public:	
 
 	ASTargetDummy();
-	
 
 protected:
 
