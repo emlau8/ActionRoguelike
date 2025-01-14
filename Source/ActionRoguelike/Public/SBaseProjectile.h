@@ -4,11 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Sound/SoundCue.h"
+#include "Components/AudioComponent.h"
 #include "SBaseProjectile.generated.h"
 
 class USphereComponent;
 class UProjectileMovementComponent;
 class UParticleSystemComponent;
+class USoundCue;
 
 UCLASS(ABSTRACT) // 'Abstract' marks this class as incomplete keeping this out of certain dropdowns windows like SpawnActor in Unreal Editor
 class ACTIONROGUELIKE_API ASBaseProjectile : public AActor
@@ -28,6 +31,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category= "Component")
 	UParticleSystemComponent* EffectComp;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	USoundCue* ImpactSoundCue;
 
 	// 'virtual' so we can override this in child-classes
 	UFUNCTION()
