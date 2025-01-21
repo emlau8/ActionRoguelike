@@ -74,7 +74,7 @@ protected:
 	void PrimaryInteract();
 	
 	UFUNCTION()
-	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
+	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float HealthMax, float Delta);
 
 	virtual void PostInitializeComponents() override;
 	

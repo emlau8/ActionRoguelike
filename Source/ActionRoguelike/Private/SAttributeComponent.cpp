@@ -7,7 +7,7 @@
 USAttributeComponent::USAttributeComponent()
 {
 	Health = 100;
-	MaxHealth = 100;
+	HealthMax = 100;
 }
 
 bool USAttributeComponent::IsAlive() const
@@ -18,10 +18,9 @@ bool USAttributeComponent::IsAlive() const
 bool USAttributeComponent::ApplyHealthChange(float Delta)
 {
 	Health += Delta;
-	Health = Health / MaxHealth;
-	Health = FMath::Clamp(Health, 0.0f, MaxHealth);
+	Health = FMath::Clamp(Health, 0.0f, HealthMax);
 
-	OnHealthChanged.Broadcast(nullptr, this, Health, Delta);
+	OnHealthChanged.Broadcast(nullptr, this, Health, HealthMax, Delta);
 	
 	return true;
 }
