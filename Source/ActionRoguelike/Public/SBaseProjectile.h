@@ -22,6 +22,15 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, category = "Effect")
 	UParticleSystem* ImpactVFX;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect")
+	USoundCue* ImpactSoundCue;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Effect")
+	TSubclassOf<UCameraShakeBase> CameraShake;
+
+	UPROPERTY(EditDefaultsOnly, category = "Effect")
+	UParticleSystem* MuzzleFlashVFX;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category= "Component")
 	USphereComponent* SphereComp;
@@ -31,9 +40,6 @@ protected:
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category= "Component")
 	UParticleSystemComponent* EffectComp;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
-	USoundCue* ImpactSoundCue;
 
 	// 'virtual' so we can override this in child-classes
 	UFUNCTION()
@@ -52,4 +58,5 @@ public:
 	// Sets default values for this actor's properties
 	ASBaseProjectile();
 
+	virtual void BeginPlay() override;
 };

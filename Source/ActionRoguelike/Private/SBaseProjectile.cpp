@@ -6,6 +6,7 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "Kismet/GameplayStatics.h"
 
+
 // Sets default values
 ASBaseProjectile::ASBaseProjectile()
 {
@@ -43,7 +44,14 @@ void ASBaseProjectile::Explode_Implementation()
 		UGameplayStatics::SpawnEmitterAtLocation(this, ImpactVFX, GetActorLocation(), GetActorRotation());
 
 		UGameplayStatics::PlaySoundAtLocation(this, ImpactSoundCue, GetActorLocation(), GetActorRotation());
-	
+
+		// Camera Shake
+		APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+		if (PlayerController)
+		{
+			PlayerController->ClientStartCameraShake(CameraShake);
+		}
+		
 		Destroy();
 	}
 }
@@ -51,5 +59,11 @@ void ASBaseProjectile::Explode_Implementation()
 void ASBaseProjectile::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	//SphereComp->IgnoreActorWhenMoving(GetInstigator(), true);
+}
+
+void ASBaseProjectile::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	UGameplayStatics::SpawnEmitterAtLocation(this, MuzzleFlashVFX, SphereComp->GetComponentLocation(), SphereComp->GetComponentRotation());
 }

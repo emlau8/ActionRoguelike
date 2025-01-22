@@ -30,17 +30,18 @@ protected:
 	//--
 	// Category = "" - display only for detail panels and Blueprints context menu.
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
-	float Health;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
-	float HealthMax;
-
 	// HealthMax, Stamina, Strength
 
 
 public:
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
+	float Health;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
+	float HealthMax;
+	
 	UFUNCTION(BlueprintCallable)
 	bool IsAlive() const;
 

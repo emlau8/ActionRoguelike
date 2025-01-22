@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "SBaseProjectile.h"
 #include "GameFramework/Actor.h"
-
 #include "SMagicProjectile.generated.h"
 
 class UAudioComponent;

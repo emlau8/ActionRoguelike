@@ -9,6 +9,7 @@
 #include "SInteractionComponent.h"
 #include "SAttributeComponent.h"
 
+
 // Sets default values
 ASCharacter::ASCharacter()
 {
@@ -167,6 +168,7 @@ void ASCharacter::SpawnProjectile(TSubclassOf<AActor> ClassToSpawn) // Reusable 
 		// Set Transform for spawning projectile
 		FTransform SpawnTM = FTransform(NewRotation,HandLocation);
 		GetWorld()->SpawnActor<AActor>(ClassToSpawn, SpawnTM, SpawnParams);
+		
 	}
 }
 
