@@ -136,7 +136,7 @@ void ASCharacter::SpawnProjectile(TSubclassOf<AActor> ClassToSpawn) // Reusable 
 		SpawnParams.Instigator = this;
 
 		FCollisionShape Shape;
-		Shape.SetSphere(20.0f);
+		Shape.SetSphere(10.0f);
 
 		// Ignore Player
 		FCollisionQueryParams Params;
