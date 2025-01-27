@@ -17,7 +17,7 @@ ASMagicProjectile::ASMagicProjectile()
 	FlightSoundComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("FlightSoundComponent"));
 	FlightSoundComponent->SetupAttachment(RootComponent);
 
-	DamageAmount = 20.0f;
+	DamageAmount = -20.0f;
 	
 }
 
