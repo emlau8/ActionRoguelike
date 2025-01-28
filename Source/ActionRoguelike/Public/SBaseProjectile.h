@@ -28,9 +28,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Effect")
 	TSubclassOf<UCameraShakeBase> CameraShake;
-
-	UPROPERTY(EditDefaultsOnly, category = "Effect")
-	UParticleSystem* MuzzleFlashVFX;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category= "Component")
 	USphereComponent* SphereComp;
@@ -57,6 +54,5 @@ public:
 	
 	// Sets default values for this actor's properties
 	ASBaseProjectile();
-
-	virtual void BeginPlay() override;
+	
 };

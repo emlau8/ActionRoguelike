@@ -17,8 +17,11 @@ class ACTIONROGUELIKE_API ASPickUp_Base : public AActor, public ISGameplayInterf
 
 protected:
 
-	UPROPERTY(EditAnywhere, Category = "PickUp")
+	UPROPERTY(EditAnywhere, Category = "_PickUp")
 	float RespawnTime;
+
+	UPROPERTY(EditAnywhere, Category = "_PickUp")
+	float CollisionRadius;
 
 	FTimerHandle Timer_Respawn;
 

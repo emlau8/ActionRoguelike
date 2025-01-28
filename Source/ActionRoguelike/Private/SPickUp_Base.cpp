@@ -13,8 +13,10 @@ ASPickUp_Base::ASPickUp_Base()
 
 	SphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
 	SphereComp->SetCollisionProfileName("PickUp");
+	SphereComp->SetSphereRadius(CollisionRadius);
 	RootComponent = SphereComp;
 
+	CollisionRadius = 100.0f;
 	RespawnTime =  10.0f;
 	
 }

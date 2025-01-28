@@ -21,25 +21,33 @@ class ACTIONROGUELIKE_API ASCharacter : public ACharacter
 
 protected:
 
+	/* VisibleAnywhere = read-only, still usefull to view in-editor and enforce a convention. */
+	UPROPERTY(VisibleAnywhere, Category = "Effect")
+	FName TimeToHitParamName;
+	
+	UPROPERTY(VisibleAnywhere, Category = "Effect")
+	FName HandSocketName;
+
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	TSubclassOf<AActor> ProjectileClass;
+	
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	TSubclassOf<AActor> BlackholeClass;
+
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	TSubclassOf<AActor> DashClass;
 
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	UAnimMontage* AttackAnim;
 
+	/* Particle System played during attack animation */
+	UPROPERTY(EditDefaultsOnly, category = "Attack")
+	UParticleSystem* CastingEffect;
+
 	FTimerHandle TimerHandle;
 
-	UPROPERTY(EditAnywhere, Category = "Blackhole")
-	TSubclassOf<AActor> BlackholeClass;
-
-	UPROPERTY(EditAnywhere, Category = "Blackhole")
-	UAnimMontage* BlackholeAnim;
-
-	UPROPERTY(EditAnywhere, Category = "Dash")
-	TSubclassOf<AActor> DashClass;
-
-	UPROPERTY(EditAnywhere, Category = "Dash")
-	UAnimMontage* DashAnim;
+	UPROPERTY(EditDefaultsOnly, Category = "Attack")
+	float AttackAnimDelay;
 
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArmComp;
@@ -72,6 +80,8 @@ protected:
 	void SpawnProjectile(TSubclassOf<AActor> SpawnClass);
 
 	void PrimaryInteract();
+
+	void StartAttackEffect();
 	
 	UFUNCTION()
 	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float HealthMax, float Delta);

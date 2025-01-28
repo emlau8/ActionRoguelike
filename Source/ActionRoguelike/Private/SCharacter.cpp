@@ -8,6 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "SInteractionComponent.h"
 #include "SAttributeComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 
 // Sets default values
@@ -28,8 +29,11 @@ ASCharacter::ASCharacter()
 	AttributeComp = CreateDefaultSubobject<USAttributeComponent>("AttributesComp");
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
-
 	bUseControllerRotationYaw = false;
+
+	AttackAnimDelay = 0.2f;
+	TimeToHitParamName = "TimeToHit";
+	HandSocketName = "Muzzle_01";
 }
 
 void ASCharacter::PostInitializeComponents()
@@ -99,7 +103,7 @@ void ASCharacter::PrimaryAttack_TimeElapsed()
 
 void ASCharacter::Blackhole()
 {
-	PlayAnimMontage(BlackholeAnim);
+	PlayAnimMontage(AttackAnim);
 
 	GetWorldTimerManager().SetTimer(TimerHandle, this, &ASCharacter::Blackhole_TimeElapsed, 0.2f);
 	
@@ -112,7 +116,7 @@ void ASCharacter::Blackhole_TimeElapsed()
 
 void ASCharacter::Dash()
 {
-	PlayAnimMontage(DashAnim);
+	PlayAnimMontage(AttackAnim);
 
 	GetWorldTimerManager().SetTimer(TimerHandle, this, &ASCharacter::Dash_TimeElapsed, 0.2f);
 	
@@ -123,12 +127,19 @@ void ASCharacter::Dash_TimeElapsed()
 	SpawnProjectile(DashClass); // Reuse Function
 }
 
+void ASCharacter::StartAttackEffect()
+{
+	PlayAnimMontage(AttackAnim);
+
+	UGameplayStatics::SpawnEmitterAttached(CastingEffect, GetMesh(), HandSocketName, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepWorldPosition, true);
+}
+
 void ASCharacter::SpawnProjectile(TSubclassOf<AActor> ClassToSpawn) // Reusable Function
 {
 	if (ensure(ClassToSpawn))
 	{
 		// Get Spawn Projectile Location
-		FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+		FVector HandLocation = GetMesh()->GetSocketLocation(HandSocketName);
 
 		//Hand Collision Override
 		FActorSpawnParameters SpawnParams;

@@ -60,11 +60,3 @@ void ASBaseProjectile::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 }
-
-void ASBaseProjectile::BeginPlay()
-{
-	Super::BeginPlay();
-	
-	UGameplayStatics::SpawnEmitterAtLocation(this, MuzzleFlashVFX, SphereComp->GetComponentLocation(), SphereComp->GetComponentRotation());
-	
-}
