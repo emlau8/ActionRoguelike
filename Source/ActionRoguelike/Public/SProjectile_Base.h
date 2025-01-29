@@ -6,15 +6,16 @@
 #include "GameFramework/Actor.h"
 #include "Sound/SoundCue.h"
 #include "Components/AudioComponent.h"
-#include "SBaseProjectile.generated.h"
+#include "SProjectile_Base.generated.h"
 
 class USphereComponent;
 class UProjectileMovementComponent;
 class UParticleSystemComponent;
+class UAudioComponent;
 class USoundCue;
 
 UCLASS(ABSTRACT) // 'Abstract' marks this class as incomplete keeping this out of certain dropdowns windows like SpawnActor in Unreal Editor
-class ACTIONROGUELIKE_API ASBaseProjectile : public AActor
+class ACTIONROGUELIKE_API ASProjectile_Base : public AActor
 {
 	GENERATED_BODY()
 
@@ -23,6 +24,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, category = "Effect")
 	UParticleSystem* ImpactVFX;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Audio")
+	UAudioComponent* FlightSoundComponent;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect")
 	USoundCue* ImpactSoundCue;
 
@@ -50,9 +54,12 @@ protected:
 
 	virtual void PostInitializeComponents() override;
 
+	UFUNCTION()
+	virtual void BeginPlay() override;
+
 public:	
 	
 	// Sets default values for this actor's properties
-	ASBaseProjectile();
+	ASProjectile_Base();
 	
 };

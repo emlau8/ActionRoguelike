@@ -8,6 +8,7 @@
 #include "AI/SAICharacter.h"
 #include "SAttributeComponent.h"
 #include "EngineUtils.h"
+#include "DrawDebugHelpers.h"
 
 ASGameModeBase::ASGameModeBase()
 {
@@ -34,44 +35,49 @@ void ASGameModeBase::SpawnBotTimerElapsed()
 	}
 }
 
+
 void ASGameModeBase::OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus)
 {
-	if (QueryStatus != EEnvQueryStatus::Success)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Spawn bot EQS Query Failed!"));
-		return;
-	}
-
 	int32 NrOfAliveBots = 0;
 	for (TActorIterator<ASAICharacter> It(GetWorld()); It; ++It)
 	{
 		ASAICharacter* Bot = *It;
 
 		USAttributeComponent* AttributeComp = Cast<USAttributeComponent>(Bot->GetComponentByClass(USAttributeComponent::StaticClass()));
-		if (AttributeComp && AttributeComp->IsAlive())
+		if (ensure(AttributeComp && AttributeComp->IsAlive()))
 		{
 			NrOfAliveBots++;
 		}
 	}
-
+	
+	UE_LOG(LogTemp, Log, TEXT("Found %i alive bots."), NrOfAliveBots);
+	
 	float MaxBotCount = 10.0f;
 	
 	if (DifficultyCurve)
 	{
-    	MaxBotCount = DifficultyCurve->GetFloatValue(GetWorld()->TimeSeconds);
-    }
-	
+		MaxBotCount = DifficultyCurve->GetFloatValue(GetWorld()->TimeSeconds);
+	}
 	
 	if (NrOfAliveBots >= MaxBotCount)
 	{
+		UE_LOG(LogTemp, Log, TEXT("AI maximum bot capacity. Skipping bot spawn"));
 		return;
 	}
 	
+	if (QueryStatus != EEnvQueryStatus::Success)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Spawn bot EQS Query Failed!"));
+		return;
+	}
 	
 	TArray<FVector> Location = QueryInstance->GetResultsAsLocations();
 
 	if (Location.IsValidIndex(0))
 	{
 		GetWorld()->SpawnActor<AActor>(MinionClass, Location[0], FRotator::ZeroRotator);
+
+		// Track all the used spawn location
+		DrawDebugSphere(GetWorld(), Location[0], 50.0f, 20, FColor::Blue, false, 60.0f, 0, 0);
 	}
 }

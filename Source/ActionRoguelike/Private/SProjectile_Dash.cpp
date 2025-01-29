@@ -1,12 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "SDashProjectile.h"
+#include "SProjectile_Dash.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
-ASDashProjectile::ASDashProjectile()
+ASProjectile_Dash::ASProjectile_Dash()
 {
 	TeleportDelay = 0.2f;
 	DetonateDelay = 0.2f;
@@ -14,14 +14,14 @@ ASDashProjectile::ASDashProjectile()
 	MovementComp->InitialSpeed = 6000.0f;
 }
 
-void ASDashProjectile::BeginPlay()
+void ASProjectile_Dash::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	GetWorldTimerManager().SetTimer(TimerHandle_DelayedDetonate, this, &ASDashProjectile::Explode, DetonateDelay);
+	GetWorldTimerManager().SetTimer(TimerHandle_DelayedDetonate, this, &ASProjectile_Dash::Explode, DetonateDelay);
 }
 
-void ASDashProjectile::Explode_Implementation()
+void ASProjectile_Dash::Explode_Implementation()
 {
 	// Clear Time if the Explode was already called through another source like OnActorHit
 	GetWorldTimerManager().ClearTimer(TimerHandle_DelayedDetonate);
@@ -34,13 +34,13 @@ void ASDashProjectile::Explode_Implementation()
 	SetActorEnableCollision(false);
 
 	FTimerHandle TimerHandle_DelayedTeleport;
-	GetWorldTimerManager().SetTimer(TimerHandle_DelayedTeleport, this, &ASDashProjectile::TeleportInstigator, TeleportDelay);
+	GetWorldTimerManager().SetTimer(TimerHandle_DelayedTeleport, this, &ASProjectile_Dash::TeleportInstigator, TeleportDelay);
 
 	// Skip base implementation as it will destroy actor (we need to stay alive a bit longer to finish the 2nd timer)
 	//Super::Explode_Implementation();
 }
 
-void ASDashProjectile::TeleportInstigator()
+void ASProjectile_Dash::TeleportInstigator()
 {
 	AActor* ActorToTeleport = GetInstigator();
 	if (ensure(ActorToTeleport))

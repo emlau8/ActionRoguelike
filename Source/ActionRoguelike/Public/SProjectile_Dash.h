@@ -3,15 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SBaseProjectile.h"
-#include "SDashProjectile.generated.h"
+#include "SProjectile_Base.h"
+#include "SProjectile_Dash.generated.h"
 
 
 /**
  * 
  */
 UCLASS()
-class ACTIONROGUELIKE_API ASDashProjectile : public ASBaseProjectile
+class ACTIONROGUELIKE_API ASProjectile_Dash : public ASProjectile_Base
 {
 	GENERATED_BODY()
 
@@ -36,6 +36,6 @@ protected:
 public:	
 
 	// Sets default values for this actor's properties
-	ASDashProjectile();
+	ASProjectile_Dash();
 };
 

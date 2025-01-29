@@ -7,7 +7,7 @@
 #include "SAICharacter.generated.h"
 
 class UPawnSensingComponent;
-
+class USAttributeComponent;
 
 UCLASS()
 class ACTIONROGUELIKE_API ASAICharacter : public ACharacter
@@ -22,8 +22,15 @@ protected:
 
 	virtual void PostInitializeComponents() override;
 
+	UFUNCTION()
+	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float HealthMax, float Delta);
+
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 	UPawnSensingComponent* PawnSensingComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	USAttributeComponent* AttributeComp;
+
 
 	UFUNCTION()
 	void OnPawnSeen(APawn* Pawn);

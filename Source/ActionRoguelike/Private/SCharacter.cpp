@@ -65,6 +65,7 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	
 }
 
+
 void ASCharacter::MoveForward(float Value)
 {
 	FRotator ControlRot = GetControlRotation();
@@ -72,6 +73,7 @@ void ASCharacter::MoveForward(float Value)
 	ControlRot.Roll = 0.0f;
 	AddMovementInput(ControlRot.Vector() * Value);
 }
+
 
 void ASCharacter::MoveRight(float Value)
 {
@@ -88,6 +90,7 @@ void ASCharacter::MoveRight(float Value)
 	AddMovementInput(RightVector, Value);
 }
 
+
 void ASCharacter::PrimaryAttack()
 {
 	PlayAnimMontage(AttackAnim);
@@ -96,10 +99,12 @@ void ASCharacter::PrimaryAttack()
 	
 }
 
+
 void ASCharacter::PrimaryAttack_TimeElapsed()
 {
 	SpawnProjectile(ProjectileClass); // Reuse Function
 }
+
 
 void ASCharacter::Blackhole()
 {
@@ -109,10 +114,12 @@ void ASCharacter::Blackhole()
 	
 }
 
+
 void ASCharacter::Blackhole_TimeElapsed()
 {
 	SpawnProjectile(BlackholeClass); // Reuse Function
 }
+
 
 void ASCharacter::Dash()
 {
@@ -122,10 +129,12 @@ void ASCharacter::Dash()
 	
 }
 
+
 void ASCharacter::Dash_TimeElapsed()
 {
 	SpawnProjectile(DashClass); // Reuse Function
 }
+
 
 void ASCharacter::StartAttackEffect()
 {
@@ -133,6 +142,7 @@ void ASCharacter::StartAttackEffect()
 
 	UGameplayStatics::SpawnEmitterAttached(CastingEffect, GetMesh(), HandSocketName, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepWorldPosition, true);
 }
+
 
 void ASCharacter::SpawnProjectile(TSubclassOf<AActor> ClassToSpawn) // Reusable Function
 {
@@ -183,6 +193,7 @@ void ASCharacter::SpawnProjectile(TSubclassOf<AActor> ClassToSpawn) // Reusable 
 	}
 }
 
+
 void ASCharacter::PrimaryInteract()
 {
 	if (InteractionComp)
@@ -190,6 +201,7 @@ void ASCharacter::PrimaryInteract()
 		InteractionComp->PrimaryInteract();
 	}
 }
+
 
 void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float HealthMax, float Delta)
 {

@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "SBaseProjectile.h"
+#include "SProjectile_Base.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Particles/ParticleSystemComponent.h"
@@ -8,18 +8,23 @@
 
 
 // Sets default values
-ASBaseProjectile::ASBaseProjectile()
+ASProjectile_Base::ASProjectile_Base()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	SphereComp = CreateDefaultSubobject<USphereComponent>("SphereComp");
 	SphereComp->SetCollisionProfileName("Projectile");
-	SphereComp->OnComponentHit.AddDynamic(this, &ASBaseProjectile::OnActorHit);
+	SphereComp->OnComponentHit.AddDynamic(this, &ASProjectile_Base::OnActorHit);
 	RootComponent = SphereComp;
 
 	EffectComp = CreateDefaultSubobject<UParticleSystemComponent>("EffectComp");
 	EffectComp->SetupAttachment(RootComponent);
+
+	// Initialize the audio Component
+	FlightSoundComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("FlightSoundComponent"));
+	FlightSoundComponent->SetupAttachment(RootComponent);
+
 
 	MovementComp = CreateDefaultSubobject<UProjectileMovementComponent>("MovementComp");
 	MovementComp->bRotationFollowsVelocity = true;
@@ -29,13 +34,13 @@ ASBaseProjectile::ASBaseProjectile()
 
 }
 
-void ASBaseProjectile::OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+void ASProjectile_Base::OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	Explode();
 }
 
 // _Implementation from it being marked as BlueprintNativeEvent
-void ASBaseProjectile::Explode_Implementation()
+void ASProjectile_Base::Explode_Implementation()
 {
 	// Check to make sure we aren't already being 'destroyed'
 	// Adding ensure to see if we encounter this situation at all
@@ -56,7 +61,18 @@ void ASBaseProjectile::Explode_Implementation()
 	}
 }
 
-void ASBaseProjectile::PostInitializeComponents()
+void ASProjectile_Base::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+}
+
+void ASProjectile_Base::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// Play looped sound
+	if (ensure(FlightSoundComponent))
+	{
+		FlightSoundComponent->Play();
+	}
 }

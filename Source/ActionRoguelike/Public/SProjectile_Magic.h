@@ -3,34 +3,26 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SBaseProjectile.h"
+#include "SProjectile_Base.h"
 #include "GameFramework/Actor.h"
-#include "SMagicProjectile.generated.h"
-
-class UAudioComponent;
+#include "SProjectile_Magic.generated.h"
 
 UCLASS()
-class ACTIONROGUELIKE_API ASMagicProjectile : public ASBaseProjectile
+class ACTIONROGUELIKE_API ASProjectile_Magic : public ASProjectile_Base
 {
 	GENERATED_BODY()
 
 protected:
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Audio")
-	UAudioComponent* FlightSoundComponent;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Damage")
 	float DamageAmount;
 	
 	UFUNCTION()
 	void OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
-	UFUNCTION()
-	virtual void BeginPlay() override;
-
 public:
 	
 	// Sets default values for this actor's properties
-	ASMagicProjectile();
+	ASProjectile_Magic();
 	
 };
