@@ -13,7 +13,7 @@ ASProjectile_Magic::ASProjectile_Magic()
 	
 	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &ASProjectile_Magic::OnActorOverlap);
 	
-	DamageAmount = -20.0f;
+	DamageAmount = 20.0f;
 	
 }
 
@@ -25,9 +25,13 @@ void ASProjectile_Magic::OnActorOverlap(UPrimitiveComponent* OverlappedComponent
 		USAttributeComponent* AttributeComp = Cast<USAttributeComponent>(OtherActor->GetComponentByClass(USAttributeComponent::StaticClass()));
 		if (AttributeComp)
 		{
-			AttributeComp->ApplyHealthChange(DamageAmount);
+			// Minus in front of DamageAmount to apply the change as damage, not healing
+			AttributeComp->ApplyHealthChange(GetInstigator(), -DamageAmount);
+
+			// Only explode when we hit something valid
+			Explode();
 		}
 		
-		Explode();
+		
 	}
 }
