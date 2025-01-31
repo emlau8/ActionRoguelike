@@ -6,8 +6,11 @@
 #include "GameFramework/Character.h"
 #include "SAICharacter.generated.h"
 
+
 class UPawnSensingComponent;
 class USAttributeComponent;
+class UUserWidget;
+class USWorldUserWidget;
 
 UCLASS()
 class ACTIONROGUELIKE_API ASAICharacter : public ACharacter
@@ -20,6 +23,14 @@ public:
 
 protected:
 
+	USWorldUserWidget* ActiveHealthBar;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> HealthBarWidgetClass;
+	
+	UPROPERTY(VisibleAnywhere, Category = "Effect")
+	FName TimeToHitParamName;
+	
 	void SetTargetActor(AActor* NewTarget);
 	
 	virtual void PostInitializeComponents() override;

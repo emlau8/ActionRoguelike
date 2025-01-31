@@ -14,7 +14,13 @@ class ACTIONROGUELIKE_API USAttributeComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
+
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	static USAttributeComponent* GetAttributes(AActor* FromActor);
+
+	UFUNCTION(BlueprintCallable, Category = "Attributes", meta = (DisplayName = "IsAlive"))
+	static bool IsActorAlive(AActor* Actor);
+	
 	USAttributeComponent();
 
 protected:
@@ -30,17 +36,16 @@ protected:
 	//--
 	// Category = "" - display only for detail panels and Blueprints context menu.
 	
+		UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
+    	float Health;
+    	
+    	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
+    	float HealthMax;
 	
 	// HealthMax, Stamina, Strength
 
 
 public:
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
-	float Health;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
-	float HealthMax;
 	
 	UFUNCTION(BlueprintCallable)
 	bool IsAlive() const;
