@@ -89,11 +89,13 @@ protected:
 	virtual void PostInitializeComponents() override;
 	
 public:	
-
-	// Sets default values for this character's properties
+	
 	ASCharacter();
-	// Called to bind functionality to input
+	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UFUNCTION(Exec)
+	void HealSelf(float Amount = 100);
 
 };
 
