@@ -93,3 +93,8 @@ void ASAICharacter::OnPawnSeen(APawn* Pawn)
 	DrawDebugString(GetWorld(), GetActorLocation(), "PLAYER SPOTTED", nullptr, FColor::White, 4.0f, true);
 	
 }
+
+void ASAICharacter::HealSelf(float Amount /* = 100 */)
+{
+	AttributeComp->ApplyHealthChange(this, Amount);
+}

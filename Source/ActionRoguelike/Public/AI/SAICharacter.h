@@ -46,4 +46,9 @@ protected:
 
 	UFUNCTION()
 	void OnPawnSeen(APawn* Pawn);
+
+public:
+	
+	UFUNCTION()
+	void HealSelf(float Amount = 100);
 };

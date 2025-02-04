@@ -33,6 +33,10 @@ void USBTService_CheckHealth::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
             				{
             					BlackBoardComp->SetValueAsBool(LowHealthKey.SelectedKeyName, true);
             				}
+            				else
+            				{
+            					BlackBoardComp->SetValueAsBool(LowHealthKey.SelectedKeyName, false);
+            				}
             			}
             		}
 		}
