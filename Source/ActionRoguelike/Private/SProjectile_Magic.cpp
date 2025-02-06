@@ -2,6 +2,7 @@
 
 #include "SProjectile_Magic.h"
 #include "SAttributeComponent.h"
+#include "SGameplayFunctionLibrary.h"
 #include "Audio/AudioDebug.h"
 #include "Components/SphereComponent.h"
 
@@ -17,21 +18,24 @@ ASProjectile_Magic::ASProjectile_Magic()
 	
 }
 
-void ASProjectile_Magic::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ASProjectile_Magic::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (OtherActor && OtherActor != GetInstigator())
 	{
-		USAttributeComponent* AttributeComp = Cast<USAttributeComponent>(OtherActor->GetComponentByClass(USAttributeComponent::StaticClass()));
-		if (AttributeComp)
+		// USAttributeComponent* AttributeComp = Cast<USAttributeComponent>(OtherActor->GetComponentByClass(USAttributeComponent::StaticClass()));
+		// if (AttributeComp)
+		// {
+		// 	// Minus in front of DamageAmount to apply the change as damage, not healing
+		// 	AttributeComp->ApplyHealthChange(GetInstigator(), -DamageAmount);
+		//
+		// 	// Only explode when we hit something valid
+		// 	Explode();
+		// }
+		//
+		
+		if (USGameplayFunctionLibrary::ApplyDirectionalDamage(GetInstigator(), OtherActor, DamageAmount, SweepResult))
 		{
-			// Minus in front of DamageAmount to apply the change as damage, not healing
-			AttributeComp->ApplyHealthChange(GetInstigator(), -DamageAmount);
-
-			// Only explode when we hit something valid
 			Explode();
 		}
-		
-		
 	}
 }
