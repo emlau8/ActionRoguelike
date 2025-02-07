@@ -8,7 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "SInteractionComponent.h"
 #include "SAttributeComponent.h"
-#include "Kismet/GameplayStatics.h"
+#include "SActionComponent.h"
 
 
 // Sets default values
@@ -28,12 +28,13 @@ ASCharacter::ASCharacter()
 
 	AttributeComp = CreateDefaultSubobject<USAttributeComponent>("AttributesComp");
 
+	ActionComp = CreateDefaultSubobject<USActionComponent>("ActionComp");
+
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	bUseControllerRotationYaw = false;
-
-	AttackAnimDelay = 0.2f;
+	
 	TimeToHitParamName = "TimeToHit";
-	HandSocketName = "Muzzle_01";
+
 }
 
 void ASCharacter::PostInitializeComponents()
@@ -63,9 +64,12 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ASCharacter::PrimaryAttack);
 	// Used generic name "SecondaryAttack" for binding
-	PlayerInputComponent->BindAction("SecondaryAttack", IE_Pressed, this, &ASCharacter::Blackhole);
+	PlayerInputComponent->BindAction("SecondaryAttack", IE_Pressed, this, &ASCharacter::BlackHole);
 	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &ASCharacter::Dash);
 	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed, this, &ASCharacter::PrimaryInteract);
+
+	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &ASCharacter::SprintStart);
+	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ASCharacter::SprintStop);
 	
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASCharacter::Jump);
 }
@@ -100,107 +104,32 @@ void ASCharacter::MoveRight(float Value)
 	AddMovementInput(RightVector, Value);
 }
 
+void ASCharacter::SprintStart()
+{
+	ActionComp->StartActionByName(this,"Sprint");
+}
+
+void ASCharacter::SprintStop()
+{
+	ActionComp->StopActionByName(this,"Sprint");
+}
+
 
 void ASCharacter::PrimaryAttack()
 {
-	PlayAnimMontage(AttackAnim);
-
-	GetWorldTimerManager().SetTimer(TimerHandle, this, &ASCharacter::PrimaryAttack_TimeElapsed, 0.2f);
-	
+	ActionComp->StartActionByName(this, "PrimaryAttack");
 }
 
 
-void ASCharacter::PrimaryAttack_TimeElapsed()
+void ASCharacter::BlackHole()
 {
-	SpawnProjectile(ProjectileClass); // Reuse Function
-}
-
-
-void ASCharacter::Blackhole()
-{
-	PlayAnimMontage(AttackAnim);
-
-	GetWorldTimerManager().SetTimer(TimerHandle, this, &ASCharacter::Blackhole_TimeElapsed, 0.2f);
-	
-}
-
-
-void ASCharacter::Blackhole_TimeElapsed()
-{
-	SpawnProjectile(BlackholeClass); // Reuse Function
+	ActionComp->StartActionByName(this, "BlackHole");
 }
 
 
 void ASCharacter::Dash()
 {
-	PlayAnimMontage(AttackAnim);
-
-	GetWorldTimerManager().SetTimer(TimerHandle, this, &ASCharacter::Dash_TimeElapsed, 0.2f);
-	
-}
-
-
-void ASCharacter::Dash_TimeElapsed()
-{
-	SpawnProjectile(DashClass); // Reuse Function
-}
-
-
-void ASCharacter::StartAttackEffect()
-{
-	PlayAnimMontage(AttackAnim);
-
-	UGameplayStatics::SpawnEmitterAttached(CastingEffect, GetMesh(), HandSocketName, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepWorldPosition, true);
-}
-
-
-void ASCharacter::SpawnProjectile(TSubclassOf<AActor> ClassToSpawn) // Reusable Function
-{
-	if (ensure(ClassToSpawn))
-	{
-		// Get Spawn Projectile Location
-		FVector HandLocation = GetMesh()->GetSocketLocation(HandSocketName);
-
-		//Hand Collision Override
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		SpawnParams.Instigator = this;
-
-		FCollisionShape Shape;
-		Shape.SetSphere(10.0f);
-
-		// Ignore Player
-		FCollisionQueryParams Params;
-		Params.AddIgnoredActor(this);
-
-		FCollisionObjectQueryParams ObjParams;
-		ObjParams.AddObjectTypesToQuery(ECC_WorldDynamic);
-		ObjParams.AddObjectTypesToQuery(ECC_WorldStatic);
-		ObjParams.AddObjectTypesToQuery(ECC_Pawn);
-		
-		// Trace Start from the camera location
-		FVector TraceStart = CameraComp->GetComponentLocation();
-		
-		// Extend Trace 5000 units forward
-		FVector TraceEnd = TraceStart + (CameraComp->GetForwardVector()* 5000);
-
-		// Perform line trace to interact with environment
-		FHitResult Hit;
-		// returns true if we got to a blockoing hit
-		if (GetWorld()->SweepSingleByObjectType(Hit, TraceStart, TraceEnd, FQuat::Identity, ObjParams, Shape, Params))
-		{
-			// Overwrite trace end with impact point in world
-			TraceEnd = Hit.ImpactPoint;
-		}
-		
-		// Create the NewRotation
-		FRotator NewRotation = FRotationMatrix::MakeFromX(TraceEnd - HandLocation).Rotator();
-	
-		// Set Transform for spawning projectile
-		FTransform SpawnTM = FTransform(NewRotation,HandLocation);
-		GetWorld()->SpawnActor<AActor>(ClassToSpawn, SpawnTM, SpawnParams);
-		
-	}
+	ActionComp->StartActionByName(this, "Dash");
 }
 
 
