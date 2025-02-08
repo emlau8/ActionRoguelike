@@ -48,4 +48,6 @@ void ASProjectile_Dash::TeleportInstigator()
 		// Keep instigator rotation or it may end up jarring
 		ActorToTeleport->TeleportTo(GetActorLocation(), ActorToTeleport->GetActorRotation(), false, false);
 	}
+
+	Destroy();
 }

@@ -24,7 +24,7 @@ void USAction_AttackProjectile::StartAction_Implementation(AActor* Instigator)
 	{
 		Character->PlayAnimMontage(AttackAnim);
 
-		UGameplayStatics::SpawnEmitterAttached(CastingEffect, Character->GetMesh(), HandSocketName, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepWorldPosition, true);
+		UGameplayStatics::SpawnEmitterAttached(CastingEffect, Character->GetMesh(), HandSocketName, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::SnapToTarget, true);
 
 		FTimerHandle TimerHandle_AttackDelay;
 		FTimerDelegate Delegate;
