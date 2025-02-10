@@ -1,10 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "SProjectile_Magic.h"
+#include "SActionComponent.h"
 #include "SAttributeComponent.h"
 #include "SGameplayFunctionLibrary.h"
-#include "Audio/AudioDebug.h"
 #include "Components/SphereComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
+
+
 
 // Sets default values
 ASProjectile_Magic::ASProjectile_Magic()
@@ -22,17 +25,20 @@ void ASProjectile_Magic::OnActorOverlap(UPrimitiveComponent* OverlappedComponent
 {
 	if (OtherActor && OtherActor != GetInstigator())
 	{
-		// USAttributeComponent* AttributeComp = Cast<USAttributeComponent>(OtherActor->GetComponentByClass(USAttributeComponent::StaticClass()));
-		// if (AttributeComp)
-		// {
-		// 	// Minus in front of DamageAmount to apply the change as damage, not healing
-		// 	AttributeComp->ApplyHealthChange(GetInstigator(), -DamageAmount);
-		//
-		// 	// Only explode when we hit something valid
-		// 	Explode();
-		// }
-		//
+		// FName Muzzle = "Muzzle_01";
+
+		// static FGameplayTag Tag = FGameplayTag::RequestGameplayTag("Status.Parrying");
 		
+		USActionComponent* ActionComp = Cast<USActionComponent>(OtherActor->GetComponentByClass(USActionComponent::StaticClass()));
+		if (ActionComp && ActionComp->ActiveGameplayTags.HasTag(ParryTag))
+		{
+			MovementComp->Velocity = -MovementComp->Velocity;
+
+			SetInstigator(Cast<APawn>(OtherActor));
+			return;
+		}
+		
+		// Apply Damage & Impulse
 		if (USGameplayFunctionLibrary::ApplyDirectionalDamage(GetInstigator(), OtherActor, DamageAmount, SweepResult))
 		{
 			Explode();

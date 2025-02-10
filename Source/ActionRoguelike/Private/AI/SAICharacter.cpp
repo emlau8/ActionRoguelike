@@ -10,6 +10,8 @@
 #include "DrawDebugHelpers.h"
 #include "SAttributeComponent.h"
 #include "BrainComponent.h"
+#include "SAction.h"
+#include "SActionComponent.h"
 #include "SWorldUserWidget.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -20,6 +22,8 @@ ASAICharacter::ASAICharacter()
 	PawnSensingComp = CreateDefaultSubobject<UPawnSensingComponent>("PawnSensingComp");
 
 	AttributeComp = CreateDefaultSubobject<USAttributeComponent>("AttributesComp");
+
+	ActionComp = CreateDefaultSubobject<USActionComponent>("ActionComp");
 	
     AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
