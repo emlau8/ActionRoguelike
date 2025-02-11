@@ -10,6 +10,7 @@
 #include "EngineUtils.h"
 #include "DrawDebugHelpers.h"
 #include "SCharacter.h"
+#include "SPlayerState.h"
 
 static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("su.SpawnBots"), true, TEXT("Enable spawning of bots via timer."), ECVF_Cheat);
 
@@ -120,6 +121,16 @@ void ASGameModeBase::RespawnPlayerElapsed(AController* Controller)
 
 void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
 {
+	if (APlayerController* KillerController = Cast<APlayerController>(Killer->GetInstigatorController()))
+	{
+		ASPlayerState* KillerPlayerState = KillerController->GetPlayerState<ASPlayerState>();
+		if (KillerPlayerState)
+		{
+			KillerPlayerState->ApplyCreditChange(1);
+			UE_LOG(LogTemp, Log, TEXT("More Credits!"));
+		}
+	}
+
 	ASCharacter* Player = Cast<ASCharacter>(VictimActor);
 	if (Player)
 	{
