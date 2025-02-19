@@ -4,14 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "SPickUp_Base.h"
-#include "SPickUp_HealthPotion.generated.h"
-
+#include "SPickUp_Coin.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ACTIONROGUELIKE_API ASPickUp_HealthPotion : public ASPickUp_Base
+class ACTIONROGUELIKE_API ASPickUp_Coin : public ASPickUp_Base
 {
 	GENERATED_BODY()
 
@@ -21,5 +20,5 @@ protected:
 
 public:
 	
-	ASPickUp_HealthPotion();
+	ASPickUp_Coin();
 };

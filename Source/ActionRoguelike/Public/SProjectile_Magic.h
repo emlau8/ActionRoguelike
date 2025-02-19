@@ -8,6 +8,9 @@
 #include "GameFramework/Actor.h"
 #include "SProjectile_Magic.generated.h"
 
+
+class USActionEffect;
+
 UCLASS()
 class ACTIONROGUELIKE_API ASProjectile_Magic : public ASProjectile_Base
 {
@@ -20,6 +23,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
 	FGameplayTag ParryTag;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Damage")
+	TSubclassOf<USActionEffect>BurningActionClass;
 	
 	UFUNCTION()
 	void OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);

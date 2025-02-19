@@ -9,6 +9,7 @@
 
 
 class USphereComponent;
+class UStaticMeshComponent;
 
 UCLASS()
 class ACTIONROGUELIKE_API ASPickUp_Base : public AActor, public ISGameplayInterface
@@ -23,6 +24,12 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "_PickUp")
 	float CollisionRadius;
 
+	UPROPERTY(EditAnywhere, Category = "_PickUp")
+	float PickUpHeight;
+	
+	UPROPERTY(EditAnywhere, Category = "_PickUp")
+	int32 CreditCost;
+
 	FTimerHandle Timer_Respawn;
 
 	UFUNCTION()
@@ -32,8 +39,11 @@ protected:
 
 	void SetPickUpState(bool bNewIsActive);
 	
-	UPROPERTY(VisibleAnywhere, Category = "PickUp")
+	UPROPERTY(VisibleAnywhere, Category = "_PickUp")
 	USphereComponent* SphereComp;
+
+	UPROPERTY(VisibleAnywhere, Category = "Mesh")
+	UStaticMeshComponent* MeshComp;
 
 public:
 

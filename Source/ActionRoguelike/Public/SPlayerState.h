@@ -3,8 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Delegates/DelegateCombinations.h"
 #include "GameFramework/PlayerState.h"
 #include "SPlayerState.generated.h"
+
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnCreditChanged, ASPlayerState*, PlayerState, int32, NewCredit, int32, Delta);
 
 /**
  * 
@@ -14,12 +18,22 @@ class ACTIONROGUELIKE_API ASPlayerState : public APlayerState
 {
 	GENERATED_BODY()
 
-public:
+protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Credit")
 	int32 Credit;
 
-	void ApplyCreditChange(int32 Amount);
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "Credit")
+	int32 GetCredit() const;
 	
-	
+	UFUNCTION(BlueprintCallable, Category = "Credit")
+	void AddCredit(int32 Delta);
+
+	UFUNCTION(BlueprintCallable, Category = "Credit")
+	bool RemoveCredit(int32 Delta);
+
+	UPROPERTY(BlueprintAssignable)
+    FOnCreditChanged OnCreditChanged;
 };

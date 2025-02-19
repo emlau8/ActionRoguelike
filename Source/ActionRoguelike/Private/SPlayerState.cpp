@@ -4,10 +4,45 @@
 #include "SPlayerState.h"
 
 
-void ASPlayerState::ApplyCreditChange(int32 Amount)
+
+
+void ASPlayerState::AddCredit(int32 Delta)
 {
-	if (Amount < 0.0f)
+	// Avoid user-error of adding a negative amount or zero
+	if (!ensure(Delta > 0.0f))
 	{
-		Credit += Amount;
+		return;
 	}
+	
+	Credit += Delta;
+	
+	OnCreditChanged.Broadcast(this, Credit, Delta);
+	
+}
+
+bool ASPlayerState::RemoveCredit(int32 Delta)
+{
+	// Avoid user-error of adding a subtracting negative amount or zero
+	if (!ensure(Delta > 0.0f))
+	{
+		return false;
+	}
+	
+	if (Credit < Delta)
+	{
+		// Not enough credits available
+		
+	}
+
+	Credit -= Delta;
+	
+    OnCreditChanged.Broadcast(this, Credit, -Delta);
+
+	return true;
+}
+
+
+int32 ASPlayerState::GetCredit() const
+{
+	return Credit;
 }

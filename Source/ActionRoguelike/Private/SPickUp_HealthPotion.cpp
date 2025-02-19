@@ -3,13 +3,11 @@
 
 #include "SPickUp_HealthPotion.h"
 #include "SAttributeComponent.h"
+#include "SPlayerState.h"
 
 ASPickUp_HealthPotion::ASPickUp_HealthPotion()
 {
-	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>("MeshComp");
-	// Disable Collision, instead we use SphereComp to handle interaction queries
-	MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	MeshComp->SetupAttachment(RootComponent);
+	CreditCost = 50;
 }
 
 void ASPickUp_HealthPotion::Interact_Implementation(APawn* InstigatorPawn)
@@ -19,14 +17,17 @@ void ASPickUp_HealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 		return;
 	}
 	
-	USAttributeComponent* AttributeComp = Cast<USAttributeComponent>(InstigatorPawn->GetComponentByClass(USAttributeComponent::StaticClass()));
+	USAttributeComponent* AttributeComp = USAttributeComponent::GetAttributes(InstigatorPawn);
+	// Check if not already at max health
 	if (ensure(AttributeComp) && !AttributeComp->IsFullHealth())
 	{
-		// Only activate if healed succesfully
-		if (AttributeComp->ApplyHealthChange(this,AttributeComp->GetHealthMax()))
+		if (ASPlayerState* PS = InstigatorPawn->GetPlayerState<ASPlayerState>())
 		{
-			HideAndCooldownPickUp();
+			if (PS->RemoveCredit(CreditCost)&& AttributeComp->ApplyHealthChange(this, AttributeComp->GetHealthMax()))
+			{
+				// Only activate if healed successfully
+				HideAndCooldownPickUp();
+			}
 		}
-		
 	}
 }

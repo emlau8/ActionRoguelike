@@ -2,6 +2,7 @@
 
 
 #include "SPickUp_Base.h"
+#include "SPlayerState.h"
 #include "Components/SphereComponent.h"
 
 
@@ -15,10 +16,17 @@ ASPickUp_Base::ASPickUp_Base()
 	SphereComp->SetCollisionProfileName("PickUp");
 	SphereComp->SetSphereRadius(CollisionRadius);
 	RootComponent = SphereComp;
-
+	
+	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>("MeshComp");
+	// Disable Collision, instead we use SphereComp to handle interaction queries
+	MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	MeshComp->SetupAttachment(RootComponent);
+	
+	PickUpHeight = 100.0f;
 	CollisionRadius = 100.0f;
 	RespawnTime =  10.0f;
-	
+
+	CreditCost = 0;
 }
 
 void ASPickUp_Base::Interact_Implementation(APawn* InstigatorPawn)
