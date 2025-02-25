@@ -47,11 +47,11 @@ protected:
 	TArray<TSubclassOf<AActor>> PickUpClass;
 
 	/* Distance required between pick-up spawn locations */
-	UPROPERTY(EditDefaultsOnly, Category = "Credit")
+	UPROPERTY(EditDefaultsOnly, Category = "PickUp")
 	float RequiredPickUpDistance;
 
 	/* Amount of pick-up to spawn during match start */
-	UPROPERTY(EditDefaultsOnly, Category = "Credit")
+	UPROPERTY(EditDefaultsOnly, Category = "PickUp")
     int32 DesiredPickUpCount;
 	
 	UFUNCTION()

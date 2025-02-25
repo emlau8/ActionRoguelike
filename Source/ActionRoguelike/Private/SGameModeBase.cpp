@@ -46,6 +46,8 @@ void ASGameModeBase::StartPlay()
 		if (ensure(QueryInstance))
 		{
 			QueryInstance->GetOnQueryFinishedEvent().AddDynamic(this, &ASGameModeBase::OnQueryCompleted_PickUp);
+
+			UE_LOG(LogTemp, Display, TEXT("QueryInstance!"));
 		}
 	}
 
@@ -138,6 +140,8 @@ void ASGameModeBase::OnQueryCompleted_PickUp(UEnvQueryInstanceBlueprintWrapper* 
 		return;
 	}
 
+	UE_LOG(LogTemp, Warning, TEXT("PickUp EQS Query Success!"));
+
 	TArray<FVector> Locations = QueryInstance->GetResultsAsLocations();
 
 	// Keep used locations to easily check distance between points
@@ -172,7 +176,7 @@ void ASGameModeBase::OnQueryCompleted_PickUp(UEnvQueryInstanceBlueprintWrapper* 
 		}
 
 		// Failed the distance test
-		if (bValidLocation)
+		if (!bValidLocation)
 		{
 			continue;
 		}
@@ -182,10 +186,11 @@ void ASGameModeBase::OnQueryCompleted_PickUp(UEnvQueryInstanceBlueprintWrapper* 
 		TSubclassOf<AActor> RandomPickUpClass = PickUpClass[RandomClassIndex];
 
 		GetWorld()->SpawnActor<AActor>(RandomPickUpClass, PickedLocation, FRotator::ZeroRotator);
-
+		
 		// Keep for distance checks
 		UsedLocations.Add(PickedLocation);
 		SpawnCounter++;
+		
 	}
 }
 
@@ -219,16 +224,12 @@ void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
 
 	// Give player credit for kill
 	APawn* KillerPawn = Cast<APawn>(Killer);
-	if (APlayerController* KillerController = Cast<APlayerController>(Killer->GetInstigatorController()))
+	if (KillerPawn)
 	{
-		ASPlayerState* KillerPlayerState = KillerController->GetPlayerState<ASPlayerState>();
-		if (KillerPawn)
+		ASPlayerState* PS = KillerPawn->GetPlayerState<ASPlayerState>();
+		if (PS)
 		{
-			ASPlayerState* PS = KillerPawn->GetPlayerState<ASPlayerState>();
-			if (PS)
-			{
-				PS->AddCredit(CreditPerKill);
-			}
+			PS->AddCredit(CreditPerKill);
 		}
 	}
 }
