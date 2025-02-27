@@ -6,15 +6,11 @@
 #include "Components/SphereComponent.h"
 
 
-// Sets default values
+
 ASPickUp_Base::ASPickUp_Base()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
 	SphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
 	SphereComp->SetCollisionProfileName("PickUp");
-	SphereComp->SetSphereRadius(CollisionRadius);
 	RootComponent = SphereComp;
 	
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>("MeshComp");
@@ -22,11 +18,9 @@ ASPickUp_Base::ASPickUp_Base()
 	MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	MeshComp->SetupAttachment(RootComponent);
 	
-	PickUpHeight = 100.0f;
-	CollisionRadius = 100.0f;
 	RespawnTime =  10.0f;
 
-	CreditCost = 0;
+	SetReplicates(true);
 }
 
 void ASPickUp_Base::Interact_Implementation(APawn* InstigatorPawn)

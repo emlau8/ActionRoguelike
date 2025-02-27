@@ -31,18 +31,24 @@ protected:
 	// VisibleDefaultsOnly - 'read-only' access for variable, only un BP editor (uncommon)
 	// EditInstanceOnly - Allow only editing of instance (eg. when placed in level)
 	// --
-	//BlueprintReadOnly - read-only in the Blueprint scripting (does not affect 'details'-panel)
+	// BlueprintReadOnly - read-only in the Blueprint scripting (does not affect 'details'-panel)
 	// BlueprintReadWrite - read-write access in Blueprints
 	//--
 	// Category = "" - display only for detail panels and Blueprints context menu.
 	
-		UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
+		UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated, Category = "Attributes")
     	float Health;
     	
-    	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
+    	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated, Category = "Attributes")
     	float HealthMax;
 	
 	// HealthMax, Stamina, Strength
+
+	//UPROPERTY(ReplicatedUsing = "")
+	//bool bIsAlive;
+	
+	UFUNCTION(NetMulticast, Reliable) // @FIXME : mark as Unreliable once we moved the 'state' out of SCharacter
+	void MulticastHealthChanged(AActor* InstigatorActor, float NewHealth, float Delta);
 
 
 public:
