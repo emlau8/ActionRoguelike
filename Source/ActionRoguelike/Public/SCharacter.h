@@ -6,6 +6,7 @@
 #include "SAttributeComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/Character.h"
+#include "SActionComponent.h"
 #include "SCharacter.generated.h"
 
 class UCameraComponent;

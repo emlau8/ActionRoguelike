@@ -9,6 +9,7 @@
 #include "SInteractionComponent.h"
 #include "SAttributeComponent.h"
 #include "SActionComponent.h"
+#include "SActionEffect_Thorns.h"
 
 
 // Sets default values
@@ -147,6 +148,10 @@ void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent*
 	if (Delta < 0.0f)
 	{
 		GetMesh()->SetScalarParameterValueOnMaterials("TimeToHit", GetWorld()->TimeSeconds);
+
+		// Rage added equal to damage recieved (Abs turn into positive rage number)
+		float RageDelta = FMath::Abs(Delta);
+		AttributeComp->ApplyRage(InstigatorActor, RageDelta);
 	}
 
 	if (NewHealth <= 0.0f && Delta < 0.0f)
@@ -154,6 +159,6 @@ void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent*
 		APlayerController* PC = Cast <APlayerController>(GetController());
 		DisableInput(PC);
 	}
-
+	
 }
 

@@ -3,6 +3,7 @@
 
 #include "SPickUp_HealthPotion.h"
 #include "SAttributeComponent.h"
+#include "SGameModeBase.h"
 #include "SPlayerState.h"
 
 ASPickUp_HealthPotion::ASPickUp_HealthPotion()
@@ -23,11 +24,15 @@ void ASPickUp_HealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 	{
 		if (ASPlayerState* PS = InstigatorPawn->GetPlayerState<ASPlayerState>())
 		{
-			if (PS->RemoveCredit(CreditCost)&& AttributeComp->ApplyHealthChange(this, AttributeComp->GetHealthMax()))
+			if (PS->GetCredit() >= CreditCost)
 			{
-				// Only activate if healed successfully
-				HideAndCooldownPickUp();
+				if (PS->RemoveCredit(CreditCost)&& AttributeComp->ApplyHealthChange(this, AttributeComp->GetHealthMax()))
+                {
+                	// Only activate if healed successfully
+                	HideAndCooldownPickUp();
+                }
 			}
+			
 		}
 	}
 }

@@ -13,6 +13,9 @@ class UUserWidget;
 class USWorldUserWidget;
 class USActionComponent;
 
+
+
+
 UCLASS()
 class ACTIONROGUELIKE_API ASAICharacter : public ACharacter
 {
@@ -29,16 +32,25 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UUserWidget> HealthBarWidgetClass;
 	
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> SpottedWidgetClass;
+	
 	UPROPERTY(VisibleAnywhere, Category = "Effect")
 	FName TimeToHitParamName;
+
+	UPROPERTY(VisibleAnywhere, Category = "Effect")
+	FName TargetActorKey;
 	
 	void SetTargetActor(AActor* NewTarget);
+
+	UFUNCTION()
+	AActor* GetTargetActor() const;
 	
 	virtual void PostInitializeComponents() override;
 
 	UFUNCTION()
 	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
-
+	
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 	UPawnSensingComponent* PawnSensingComp;
 
