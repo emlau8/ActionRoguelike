@@ -41,7 +41,7 @@ void ASProjectile_Magic::OnActorOverlap(UPrimitiveComponent* OverlappedComponent
 		{
 			Explode();
 
-			if (ActionComp)
+			if (ActionComp && HasAuthority())
 			{
 				ActionComp->AddAction(GetInstigator(), BurningActionClass);
 			}
