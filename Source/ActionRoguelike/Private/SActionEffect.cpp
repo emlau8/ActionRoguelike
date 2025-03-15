@@ -4,6 +4,8 @@
 #include "SActionEffect.h"
 #include "SActionComponent.h"
 
+
+
 USActionEffect::USActionEffect()
 {
 	bAutoStart = true;
@@ -49,6 +51,13 @@ void USActionEffect::StopAction_Implementation(AActor* Instigator)
 	{
 		Comp->RemoveAction(this);
 	}
+}
+
+
+float USActionEffect::GetTimeRemaining() const
+{
+	float EndTime = TimeStarted + Duration;
+	return EndTime - GetWorld()->GetTimeSeconds();
 }
 
 
