@@ -16,6 +16,9 @@ class ACTIONROGUELIKE_API ASPickUp_Coin : public ASPickUp_Base
 
 protected:
 
+	UPROPERTY(EditAnywhere, Category = "HealthPotion")
+	int32 CreditCost;
+	
 	virtual void Interact_Implementation(APawn* InstigatorPawn) override;
 
 public:

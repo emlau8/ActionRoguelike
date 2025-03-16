@@ -28,6 +28,11 @@ void ASPickUp_Base::Interact_Implementation(APawn* InstigatorPawn)
 	// Logic in derived classes...
 }
 
+FText ASPickUp_Base::GetInteractText_Implementation(APawn* InstigatorPawn)
+{
+	return FText::GetEmpty();
+}
+
 void ASPickUp_Base::ShowPickUp()
 {
 	SetPickUpState(true);

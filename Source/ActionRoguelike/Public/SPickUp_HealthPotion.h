@@ -7,6 +7,7 @@
 #include "SPickUp_HealthPotion.generated.h"
 
 
+class UStaticMeshComponent;
 /**
  * 
  */
@@ -17,9 +18,14 @@ class ACTIONROGUELIKE_API ASPickUp_HealthPotion : public ASPickUp_Base
 
 protected:
 
-	virtual void Interact_Implementation(APawn* InstigatorPawn) override;
+	UPROPERTY(EditAnywhere, Category = "HealthPotion")
+	int32 CreditCost;
 
 public:
+
+	void Interact_Implementation(APawn* InstigatorPawn) override;
+
+	FText GetInteractText_Implementation(APawn* InstigatorPawn) override;
 	
 	ASPickUp_HealthPotion();
 };

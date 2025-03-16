@@ -27,9 +27,6 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "_PickUp")
 	float PickUpHeight;
 	
-	UPROPERTY(EditAnywhere, Category = "_PickUp")
-	int32 CreditCost;
-
 	FTimerHandle Timer_Respawn;
 
 	UFUNCTION()
@@ -48,6 +45,8 @@ protected:
 public:
 
 	void Interact_Implementation(APawn* InstigatorPawn) override;
+
+	FText GetInteractText_Implementation(APawn* InstigatorPawn);
 	
 	ASPickUp_Base();
 	

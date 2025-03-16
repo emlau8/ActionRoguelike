@@ -11,6 +11,7 @@
 #include "DrawDebugHelpers.h"
 #include "SCharacter.h"
 #include "SGameplayInterface.h"
+#include "SMonsterData.h"
 #include "SPlayerState.h"
 #include "SSaveGame.h"
 #include "GameFramework/GameStateBase.h"
@@ -148,10 +149,22 @@ void ASGameModeBase::OnQueryCompleted_Bot(UEnvQueryInstanceBlueprintWrapper* Que
 	TArray<FVector> Location = QueryInstance->GetResultsAsLocations();
     if (Location.IsValidIndex(0))
     {
-    	GetWorld()->SpawnActor<AActor>(MinionClass, Location[0], FRotator::ZeroRotator);
+
+    	if (MonsterTable)
+    	{
+    		TArray<FMonsterInfoRow*> Rows;
+    		MonsterTable->GetAllRows("", Rows);
+
+    		// Get random Enemy
+    		int32 RandomIndex = FMath::RandRange(0, Rows.Num() - 1);
+    		FMonsterInfoRow* SelectedRow = Rows[RandomIndex];
+
+    		GetWorld()->SpawnActor<AActor>(SelectedRow->MonsterData->MonsterClass, Location[0], FRotator::ZeroRotator);
+    	}
+    	
 
     	// Track all the used spawn location
-    	DrawDebugSphere(GetWorld(), Location[0], 50.0f, 20, FColor::Blue, false, 60.0f, 0, 0);
+    	//DrawDebugSphere(GetWorld(), Location[0], 50.0f, 20, FColor::Blue, false, 60.0f, 0, 0);
     }
 }
 
