@@ -14,6 +14,8 @@
 #include "SMonsterData.h"
 #include "SPlayerState.h"
 #include "SSaveGame.h"
+#include "ActionRoguelike/ActionRoguelike.h"
+#include "Engine/AssetManager.h"
 #include "GameFramework/GameStateBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Serialization/ObjectAndNameAsStringProxyArchive.h"
@@ -159,10 +161,33 @@ void ASGameModeBase::OnQueryCompleted_Bot(UEnvQueryInstanceBlueprintWrapper* Que
     		int32 RandomIndex = FMath::RandRange(0, Rows.Num() - 1);
     		FMonsterInfoRow* SelectedRow = Rows[RandomIndex];
 
-    		GetWorld()->SpawnActor<AActor>(SelectedRow->MonsterData->MonsterClass, Location[0], FRotator::ZeroRotator);
+    		UAssetManager* Manager = UAssetManager::GetIfValid();
+    		if (Manager)
+    		{
+    			TArray<FName> Bundles;
+
+    			FStreamableDelegate Delegate;
+    			
+    			Manager->LoadPrimaryAsset(SelectedRow->MonsterId, Bundles,Delegate);
+    		}
+    		
+    		AActor* NewBot = GetWorld()->SpawnActor<AActor>(SelectedRow->MonsterData->MonsterClass, Location[0], FRotator::ZeroRotator);
+    		if (NewBot)
+    		{
+    			LogOnScreen(this, FString::Printf(TEXT("Spawned enemy: %s (%s)"), *GetNameSafe(NewBot), *GetNameSafe(SelectedRow->MonsterData)));
+
+    			// Grant special actions, buffs etc.
+    			USActionComponent* ActionComp = Cast<USActionComponent>(NewBot->GetComponentByClass(USActionComponent::StaticClass()));
+    			if (ActionComp)
+    			{
+    				for (TSubclassOf<USAction> ActionClass : SelectedRow->MonsterData->Actions)
+    				{
+    					ActionComp->AddAction(NewBot, ActionClass);
+    				}
+    			}
+    		}
     	}
     	
-
     	// Track all the used spawn location
     	//DrawDebugSphere(GetWorld(), Location[0], 50.0f, 20, FColor::Blue, false, 60.0f, 0, 0);
     }

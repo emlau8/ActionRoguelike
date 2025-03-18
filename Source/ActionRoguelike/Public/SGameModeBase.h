@@ -32,7 +32,7 @@ public:
 	}
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	USMonsterData* MonsterData;
+	FPrimaryAssetId MonsterId;
 
 	//SubclassOf<AActor> MonsterClass;
 
