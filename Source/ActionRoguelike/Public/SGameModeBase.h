@@ -109,6 +109,8 @@ protected:
 	UFUNCTION()
 	void OnQueryCompleted_Bot(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
 
+	void OnMonsterLoaded(FPrimaryAssetId LoadedId, FVector SpawnLocation);
+
 	UFUNCTION()
 	void RespawnPlayerElapsed(AController* Controller);
 

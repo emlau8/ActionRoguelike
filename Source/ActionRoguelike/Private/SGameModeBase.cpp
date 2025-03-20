@@ -42,6 +42,12 @@ void ASGameModeBase::InitGame(const FString& MapName, const FString& Options, FS
 {
 	Super::InitGame(MapName, Options, ErrorMessage);
 
+	FString SelectedSaveSlot = UGameplayStatics::ParseOption(Options, "SaveGame");
+	if (SelectedSaveSlot.Len() > 0)
+	{
+		SlotName = SelectedSaveSlot;
+	}
+
 	LoadSaveGame();
 }
 
@@ -148,8 +154,8 @@ void ASGameModeBase::OnQueryCompleted_Bot(UEnvQueryInstanceBlueprintWrapper* Que
 		return;
 	}
 	
-	TArray<FVector> Location = QueryInstance->GetResultsAsLocations();
-    if (Location.IsValidIndex(0))
+	TArray<FVector> Locations = QueryInstance->GetResultsAsLocations();
+    if (Locations.IsValidIndex(0))
     {
 
     	if (MonsterTable)
@@ -164,33 +170,46 @@ void ASGameModeBase::OnQueryCompleted_Bot(UEnvQueryInstanceBlueprintWrapper* Que
     		UAssetManager* Manager = UAssetManager::GetIfValid();
     		if (Manager)
     		{
-    			TArray<FName> Bundles;
-
-    			FStreamableDelegate Delegate;
+    			LogOnScreen(this, "Loading monsters....", FColor::Green);
     			
+    			TArray<FName> Bundles;
+    			FStreamableDelegate Delegate = FStreamableDelegate::CreateUObject(this, &ASGameModeBase::OnMonsterLoaded, SelectedRow->MonsterId, Locations[0]);
     			Manager->LoadPrimaryAsset(SelectedRow->MonsterId, Bundles,Delegate);
     		}
-    		
-    		AActor* NewBot = GetWorld()->SpawnActor<AActor>(SelectedRow->MonsterData->MonsterClass, Location[0], FRotator::ZeroRotator);
-    		if (NewBot)
-    		{
-    			LogOnScreen(this, FString::Printf(TEXT("Spawned enemy: %s (%s)"), *GetNameSafe(NewBot), *GetNameSafe(SelectedRow->MonsterData)));
-
-    			// Grant special actions, buffs etc.
-    			USActionComponent* ActionComp = Cast<USActionComponent>(NewBot->GetComponentByClass(USActionComponent::StaticClass()));
-    			if (ActionComp)
-    			{
-    				for (TSubclassOf<USAction> ActionClass : SelectedRow->MonsterData->Actions)
-    				{
-    					ActionComp->AddAction(NewBot, ActionClass);
-    				}
-    			}
-    		}
     	}
-    	
     	// Track all the used spawn location
     	//DrawDebugSphere(GetWorld(), Location[0], 50.0f, 20, FColor::Blue, false, 60.0f, 0, 0);
     }
+}
+
+
+void ASGameModeBase::OnMonsterLoaded(FPrimaryAssetId LoadedId, FVector SpawnLocation)
+{
+	LogOnScreen(this, "Finished Loading.", FColor::Green);
+	
+	UAssetManager* Manager = UAssetManager::GetIfValid();
+	if (Manager)
+	{
+		USMonsterData* MonsterData = Cast<USMonsterData>(Manager->GetPrimaryAssetObject(LoadedId));
+		if (MonsterData)
+		{
+			AActor* NewBot = GetWorld()->SpawnActor<AActor>(MonsterData->MonsterClass, SpawnLocation, FRotator::ZeroRotator);
+			if (NewBot)
+			{
+				LogOnScreen(this, FString::Printf(TEXT("Spawned enemy: %s (%s)"), *GetNameSafe(NewBot), *GetNameSafe(MonsterData)));
+
+				// Grant special actions, buffs etc.
+				USActionComponent* ActionComp = Cast<USActionComponent>(NewBot->GetComponentByClass(USActionComponent::StaticClass()));
+				if (ActionComp)
+				{
+					for (TSubclassOf<USAction> ActionClass : MonsterData->Actions)
+					{
+						ActionComp->AddAction(NewBot, ActionClass);
+					}
+				}
+			}
+		}
+	}
 }
 
 

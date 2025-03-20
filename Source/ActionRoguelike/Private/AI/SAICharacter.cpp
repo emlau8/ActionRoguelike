@@ -27,7 +27,9 @@ ASAICharacter::ASAICharacter()
 	
     AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
+	// Disabled on capsule to let projectiles pass through capsule and hit mesh instead
+	// GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
+	// Enabled on mesh to react to incoming projectiles
 	GetMesh()->SetGenerateOverlapEvents(true);
 
 	TimeToHitParamName = "TimeToHit";
